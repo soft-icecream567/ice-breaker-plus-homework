@@ -62,4 +62,11 @@ class ExamSystem:
             
             exit(1)#ai编写 退出程序
         
-        
+    #实现学号查功能
+    def index_student(self,student_id):
+        #从保存学生信息的students里面
+        for student in self.students:
+            if student.student_id==student_id:
+                return student
+        return None #排除可能该出现的查找不到的情况
+
