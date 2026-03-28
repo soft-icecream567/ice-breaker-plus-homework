@@ -136,10 +136,9 @@ class ExamSystem:
         #ai生成部分——单个学生准考证内容写入，人工更改变量名
 
         for index, student in enumerate(list_students, start=1):#批量生成准考证
-            #文件名格式为 01.txt、02.txt...
-            # {:02d} 表示格式化为两位数字，不足两位补零
-
-            file_name = f"{folder_name}/{index:02d}.txt"
+            #使得所生成的文件名格式为 01.txt、02.txt...
+            
+            file_name = f"{folder_name}/{index:02d}.txt" #{:02d} 表示格式化为两位数字，不足两位补零
             
             #content 中保存每个学生的独立信息——座位号、姓名、学号
             content = f"座位号：{index}\n姓名：{student.name}\n学号：{student.student_id}"
@@ -149,5 +148,5 @@ class ExamSystem:
             
         print('完成准考证的生成')
     
-    
+
         
