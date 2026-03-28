@@ -21,7 +21,7 @@ class ExamSystem:
     def __init__(self,file_path):
         self.file_path=file_path #保存文件信息
         self.students=[] #储存所有学生
-        self.load_students() #ai编写 解释：将文件信息加载到内存中
+        self.load_students() #AI编写 解释：将文件信息加载到内存中
 
     @staticmethod #静态方法对学号格式进行校验
     def examine_student_id(student_id):
@@ -45,11 +45,11 @@ class ExamSystem:
                 context=file.readlines()[1:]
                 #[1:]跳过表头的信息栏
                 for line in context:
-                    #ai编写 分割信息，strip() 去除首尾空白，split('\t') 按制表符分割
+                    #AI编写 分割信息，strip() 去除首尾空白，split('\t') 按制表符分割
                     parts = line.strip().split('\t')
                     
                     if len(parts) >= 5:# 确保每行都有学号、姓名、性别、班级、学院
-                        # 人工注释：创建 Student 对象并添加到列表
+                        #创建 Student 对象并添加到列表
                         student = Student(
                             student_id=parts[0],    # 学号
                             name=parts[1],          # 姓名
@@ -61,10 +61,10 @@ class ExamSystem:
                     
                         
         #文件不存在报错
-        except FileNotFoundError:#ai 编写，找不到文件时的报错
+        except FileNotFoundError:#AI编写，找不到文件时的报错
             print(f"错误：找不到文件 '{self.file_path}'")
             
-            exit(1)#ai编写 退出程序
+            exit(1)#AI编写-退出程序,并设置退出输出为1
         
     #实现学号查功能
     def index_student(self,student_id):
@@ -75,11 +75,12 @@ class ExamSystem:
         print("无法找到该学生，请重新输入学号")#排除可能该出现的查找不到的情况
         return  
 
+    #实现随机点名功能
     def call_student(self,count):
-        if isinstance(count,int)==False :
+        if isinstance(count,int)==False:#输入非数字——main的主函数调用中也排除了这个问题
             print("人数输入格式错误")
             return
-        if count >len(self.stdents):
+        if count >len(self.stdents):#人数超过总人数
             print("点名人数超过总人数")
             return 
         
@@ -89,7 +90,7 @@ class ExamSystem:
     
     #生成考场座位安排表
     def generate_exam_arrangement(self):
-        #ai 编写
+        #AI编写核心代码
         # 复制学生列表，避免影响原始数据
         # copy() 创建列表的浅拷贝，不影响内部 Student 对象
         shuffled_students = self.students.copy()
@@ -101,7 +102,7 @@ class ExamSystem:
         
         output_lines = []#储存文件内容的列表
         
-        #输出文件的生成时间
+        #第一行打印输出文件的生成时间
         output_lines.append(f"生成时间：{current_time}")
 
         output_lines.append("座位号\t姓名\t学号")#第二行是表例
@@ -127,33 +128,34 @@ class ExamSystem:
         #首先检查是否存在同名文件夹，便于后续代码debug
         folder_name='准考证'
 
-        if not os.path.exists(folder_name):
-            os.makedirs(folder_name)
+        if not os.path.exists(folder_name):#检验是否存在文件夹
+            os.makedirs(folder_name)#无文件夹则生成文件夹
             print(f"已生成文件夹{folder_name}")
         else:
             print(f"已存在{folder_name}文件夹")
 
-        #ai生成部分——单个学生准考证内容写入，人工更改变量名
+        #AI生成核心代码——单个学生准考证内容写入，人工更改变量名适配前面的变量
 
-        for index, student in enumerate(list_students, start=1):#批量生成准考证
+        for index, student in enumerate(list_students, start=1):#批量生成准考证，enumerate方便索引时代码更简洁
             #使得所生成的文件名格式为 01.txt、02.txt...
-            
+
+            #/反斜杠分隔符，确保生成的每个准考证都进入准考证文件夹
             file_name = f"{folder_name}/{index:02d}.txt" #{:02d} 表示格式化为两位数字，不足两位补零
             
             #content 中保存每个学生的独立信息——座位号、姓名、学号
             content = f"座位号：{index}\n姓名：{student.name}\n学号：{student.student_id}"
 
             with open(file_name,'w') as file:
-                file.wirte(content)
+                file.wirte(content)#写入文件
             
         print('完成准考证的生成')
     
     #ai提示需要补充交互界面
     #生成主函数，实现与用户的交互界面
     def main():
-        #ai提示——让用户输入需要完成的功能
+        #AI提示——让用户输入需要完成的功能
 
-        #ai编写核心代码
+        #AI编写核心代码
 
         #调用ExamSystem，加载学生数据，将ExamSysetm类赋给system，实现后续功能
         system=ExamSystem('人工智能编程语言学生名单.txt')
@@ -172,7 +174,7 @@ class ExamSystem:
         
             choice=input("请输入想实现的功能：")
 
-            #ai生成else-if语句，这里改成match语句更加清晰
+            #AI生成else-if语句，这里改成match语句更加清晰
             match choice:
                 case '1':#学号查询
                     student_id = input("请输入学号：")
@@ -210,16 +212,15 @@ class ExamSystem:
                         system.generate_admission_files(arranged)
                 
                 case'4':
-                    print("感谢使用，已退出程序")
+                    print("感谢使用，已退出程序")#退出程序
 
                 case _:
-                    print("无效输入，请重新输入")
+                    print("无效输入，请重新输入")#输入数字无效，不再1-4的范围内
     #ai编写——创建程序入口点
     #当运行此文件时，__name__=__main__,执行main()
 
     if __name__=='__main__':
         main()
-        
 
 
             
