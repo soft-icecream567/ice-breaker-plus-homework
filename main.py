@@ -87,4 +87,38 @@ class ExamSystem:
         selected=random.sample(self.students,count)#利用random内置函数实现随意抽取样本功能
         return selected
     
-    
+    #生成考场座位安排表
+    def generate_exam_seats(self):
+        #ai 编写
+        # 复制学生列表，避免影响原始数据
+        # copy() 创建列表的浅拷贝，不影响内部 Student 对象
+        shuffled_students = self.students.copy()
+        
+        random.shuffle(shuffled_students)# 随机打乱顺序（原地修改）
+        
+        #引入time 内置模块，获取当前时间
+        current_time = time.strftime("%Y-%m-%d %H:%M:%S")#输出格式化时间
+        
+        output_lines = []#储存文件内容的列表
+        
+        #输出文件的生成时间
+        output_lines.append(f"生成时间：{current_time}")
+
+        output_lines.append("座位号\t姓名\t学号")#第二行是表例
+        
+        #遍历打乱后的学生列表，分配座位号
+        #使用 enumerate 返回 (索引, 元素)，start=1 让索引从1开始
+        for index, student in enumerate(shuffled_students, start=1):
+            output_lines.append(f"{index}\t{student.name}\t{student.student_id}")#将打乱后的学生信息依次添入表中
+        
+        #文件写入
+        try:
+            with open("考场座位安排表.txt",'w') as file:
+                file.wirte('\n'.join(output_lines))#挨个写入学生名单
+            print("成功生成考场安排表:考场安排表.txt")
+            return shuffled_students #返回打乱后的学生名单，用于后续生成准考证
+        
+        except Exception as e:#另外设置错误提示
+            print(f"生成考场安排表错误{e}")
+            return []
+        
