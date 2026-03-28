@@ -38,28 +38,28 @@ class ExamSystem:
     
     def load_students(self):
         #使用try-except检查文件是否异常
-        
+        current_dir=os.path.dirname(os.path.abspath(__file__))
+        os.chdir(current_dir)
         try:#路径存在
-            with open('人工智能编程语言学生名单.txt','r') as file:
+            with open('人工智能编程语言学生名单.txt','r',encoding='utf-8') as file:
                 #全部读取，储存在列表中
                 context=file.readlines()[1:]
                 #[1:]跳过表头的信息栏
                 for line in context:
                     #AI编写 分割信息，strip() 去除首尾空白，split('\t') 按制表符分割
                     parts = line.strip().split('\t')
-                    
-                    if len(parts) >= 5:# 确保每行都有学号、姓名、性别、班级、学院
+                    print(parts)
+                    if len(parts) >= 6:# 确保每行都有学号、姓名、性别、班级、学院
                         #创建 Student 对象并添加到列表
                         student = Student(
-                            student_id=parts[0],    # 学号
+                            student_id=parts[4],    # 学号
                             name=parts[1],          # 姓名
                             gender=parts[2],        # 性别
                             class_name=parts[3],    # 班级
-                            college=parts[4]        # 学院
+                            institude=parts[5]        # 学院
                         )
                         self.students.append(student)
-                    
-                        
+
         #文件不存在报错
         except FileNotFoundError:#AI编写，找不到文件时的报错
             print(f"错误：找不到文件 '{self.file_path}'")
@@ -68,10 +68,12 @@ class ExamSystem:
         
     #实现学号查功能
     def index_student(self,student_id):
-        #从保存学生信息的students里面
+        #从保存学生信息的students里面搜索学号)
         for student in self.students:
             if student.student_id==student_id:
+                print(student.name)
                 return student
+            
         print("无法找到该学生，请重新输入学号")#排除可能该出现的查找不到的情况
         return  
 
@@ -80,7 +82,7 @@ class ExamSystem:
         if isinstance(count,int)==False:#输入非数字——main的主函数调用中也排除了这个问题
             print("人数输入格式错误")
             return
-        if count >len(self.stdents):#人数超过总人数
+        if count >len(self.students):#人数超过总人数
             print("点名人数超过总人数")
             return 
         
@@ -115,7 +117,7 @@ class ExamSystem:
         #文件写入
         try:
             with open("考场座位安排表.txt",'w') as file:
-                file.wirte('\n'.join(output_lines))#挨个写入学生名单
+                file.write('\n'.join(output_lines))#挨个写入学生名单
             print("成功生成考场安排表:考场安排表.txt")
             return shuffled_students #返回打乱后的学生名单，用于后续生成准考证
         
@@ -146,7 +148,7 @@ class ExamSystem:
             content = f"座位号：{index}\n姓名：{student.name}\n学号：{student.student_id}"
 
             with open(file_name,'w') as file:
-                file.wirte(content)#写入文件
+                file.write(content)#写入文件
             
         print('完成准考证的生成')
     
@@ -154,9 +156,10 @@ class ExamSystem:
     #生成主函数，实现与用户的交互界面
 def main():
     #AI提示——让用户输入需要完成的功能
-
+    #确保路径正确
+    current_dir=os.path.dirname(os.path.abspath(__file__))
+    os.chdir(current_dir)
     #AI编写核心代码
-    print(os.getcwd())
     #调用ExamSystem，加载学生数据，将ExamSysetm类赋给system，实现后续功能
     system=ExamSystem('人工智能编程语言学生名单.txt')
     #显示总人数方便后用户了解名单基本情况，后续调用减少出错可能
@@ -164,7 +167,7 @@ def main():
 
     while True:
         #显示功能菜单
-        print("考场管理系统：")
+        print("\n\n考场管理系统：")
         print("1. 查询学生信息")
         print("2. 随机点名")
         print("3. 生成考场安排表与准考证")#必须同时生成，否则准考证信息与考场安排表无法对应
@@ -178,7 +181,7 @@ def main():
         match choice:
             case '1':#学号查询
                 student_id = input("请输入学号：")
-                student = system.find_student(student_id)#调用ExamSystem中的查找学号func
+                student = system.index_student(student_id)#调用ExamSystem中的查找学号func
                 if student:#未找到返回None，则找到时，bool值为True
                     print("\n查询结果：")
                     print(student)#打印找到的结果，打印学生的各项信息
@@ -193,7 +196,7 @@ def main():
                     count = int(count_input)  #转换为整数，若出现ValueError则转换成except的输出
                     
                     #调用ExamSystem中随机点名的方法
-                    selected = system.random_call(count)
+                    selected = system.call_student(count)
 
                     if selected:#如果返回值不是None
                         print(f"\n随机点名结果（共{count}人）：")
@@ -213,9 +216,11 @@ def main():
             
             case'4':
                 print("感谢使用，已退出程序")#退出程序
+                break
 
             case _:
                 print("无效输入，请重新输入")#输入数字无效，不再1-4的范围内
+                
 #ai编写——创建程序入口点
 #当运行此文件时，__name__=__main__,执行main()
 
