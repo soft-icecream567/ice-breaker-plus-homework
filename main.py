@@ -1,3 +1,7 @@
+import random
+import time
+import os 
+
 class Student:#创建student类
     def __init__(self,name,gender,class_name,institude,student_id):
         #保存学生的各项信息
@@ -68,5 +72,19 @@ class ExamSystem:
         for student in self.students:
             if student.student_id==student_id:
                 return student
-        return None #排除可能该出现的查找不到的情况
+        print("无法找到该学生，请重新输入学号")#排除可能该出现的查找不到的情况
+        return  
 
+    def call_student(self,count):
+        if isinstance(count,int)==False :
+            print("人数输入格式错误")
+            return
+        if count >len(self.stdents):
+            print("点名人数超过总人数")
+            return 
+        
+        #ai编写 实现随机抽取样本
+        selected=random.sample(self.students,count)#利用random内置函数实现随意抽取样本功能
+        return selected
+    
+    
