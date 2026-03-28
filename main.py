@@ -121,4 +121,33 @@ class ExamSystem:
         except Exception as e:#另外设置错误提示
             print(f"生成考场安排表错误{e}")
             return []
+
+    #生成准考证
+    def generate_admission_files(self,list_students):
+        #首先检查是否存在同名文件夹，便于后续代码debug
+        folder_name='准考证'
+
+        if not os.path.exists(folder_name):
+            os.makedirs(folder_name)
+            print(f"已生成文件夹{folder_name}")
+        else:
+            print(f"已存在{folder_name}文件夹")
+
+        #ai生成部分——单个学生准考证内容写入，人工更改变量名
+
+        for index, student in enumerate(list_students, start=1):#批量生成准考证
+            #文件名格式为 01.txt、02.txt...
+            # {:02d} 表示格式化为两位数字，不足两位补零
+
+            file_name = f"{folder_name}/{index:02d}.txt"
+            
+            #content 中保存每个学生的独立信息——座位号、姓名、学号
+            content = f"座位号：{index}\n姓名：{student.name}\n学号：{student.student_id}"
+
+            with open(file_name,'w') as file:
+                file.wirte(content)
+            
+        print('完成准考证的生成')
+    
+    
         
