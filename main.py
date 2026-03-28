@@ -36,7 +36,7 @@ class ExamSystem:
         
         return flag
     
-    def read_list(self):
+    def load_students(self):
         #使用try-except检查文件是否异常
         
         try:#路径存在
@@ -152,75 +152,75 @@ class ExamSystem:
     
     #ai提示需要补充交互界面
     #生成主函数，实现与用户的交互界面
-    def main():
-        #AI提示——让用户输入需要完成的功能
+def main():
+    #AI提示——让用户输入需要完成的功能
 
-        #AI编写核心代码
+    #AI编写核心代码
+    print(os.getcwd())
+    #调用ExamSystem，加载学生数据，将ExamSysetm类赋给system，实现后续功能
+    system=ExamSystem('人工智能编程语言学生名单.txt')
+    #显示总人数方便后用户了解名单基本情况，后续调用减少出错可能
+    print(f"名单中共有{len(system.students)}位学生")
 
-        #调用ExamSystem，加载学生数据，将ExamSysetm类赋给system，实现后续功能
-        system=ExamSystem('人工智能编程语言学生名单.txt')
-        #显示总人数方便后用户了解名单基本情况，后续调用减少出错可能
-        print(f"名单中共有{len(system.students)}位学生")
+    while True:
+        #显示功能菜单
+        print("考场管理系统：")
+        print("1. 查询学生信息")
+        print("2. 随机点名")
+        print("3. 生成考场安排表与准考证")#必须同时生成，否则准考证信息与考场安排表无法对应
+        print("4. 退出系统")
 
-        while True:
-            #显示功能菜单
-            print("考场管理系统：")
-            print("1. 查询学生信息")
-            print("2. 随机点名")
-            print("3. 生成考场安排表与准考证")#必须同时生成，否则准考证信息与考场安排表无法对应
-            print("4. 退出系统")
+        #让用户选择实现的功能
+    
+        choice=input("请输入想实现的功能：")
 
-            #让用户选择实现的功能
-        
-            choice=input("请输入想实现的功能：")
+        #AI生成else-if语句，这里改成match语句更加清晰
+        match choice:
+            case '1':#学号查询
+                student_id = input("请输入学号：")
+                student = system.find_student(student_id)#调用ExamSystem中的查找学号func
+                if student:#未找到返回None，则找到时，bool值为True
+                    print("\n查询结果：")
+                    print(student)#打印找到的结果，打印学生的各项信息
+                else:
+                    print(f"未找到学号为 {student_id} 的学生")#未找到学生情况
+            
+            case '2':#随机点名
+                #使用try-except解决出现的ValueError问题
+                try:
+                    count_input = input("请输入点名人数：")#用户输入点名人数
 
-            #AI生成else-if语句，这里改成match语句更加清晰
-            match choice:
-                case '1':#学号查询
-                    student_id = input("请输入学号：")
-                    student = system.find_student(student_id)#调用ExamSystem中的查找学号func
-                    if student:#未找到返回None，则找到时，bool值为True
-                        print("\n查询结果：")
-                        print(student)#打印找到的结果，打印学生的各项信息
-                    else:
-                        print(f"未找到学号为 {student_id} 的学生")#未找到学生情况
-                
-                case '2':#随机点名
-                    #使用try-except解决出现的ValueError问题
-                    try:
-                        count_input = input("请输入点名人数：")#用户输入点名人数
-
-                        count = int(count_input)  #转换为整数，若出现ValueError则转换成except的输出
-                        
-                        #调用ExamSystem中随机点名的方法
-                        selected = system.random_call(count)
-
-                        if selected:#如果返回值不是None
-                            print(f"\n随机点名结果（共{count}人）：")
-                            for i, student in enumerate(selected, 1):#使用enumerate对学生进行索引，依次输出，更加简洁
-                                print(f"{i}. {student.name} ({student.student_id})")
-                    except ValueError:
-                            #异常处理非数字输入
-                            print("错误——请输入有效的数字")
-                
-                case '3':#生成考场安排表，同时生成准考证
-                    #必须同时生成，以为每一次安排学生是乱序的，考场安排表必须和准考证同时生成
-                    arranged=system.generate_exam_arrangement()#调用生成
+                    count = int(count_input)  #转换为整数，若出现ValueError则转换成except的输出
                     
-                    #打印准考证
-                    if arranged:
-                        system.generate_admission_files(arranged)
+                    #调用ExamSystem中随机点名的方法
+                    selected = system.random_call(count)
+
+                    if selected:#如果返回值不是None
+                        print(f"\n随机点名结果（共{count}人）：")
+                        for i, student in enumerate(selected, 1):#使用enumerate对学生进行索引，依次输出，更加简洁
+                            print(f"{i}. {student.name} ({student.student_id})")
+                except ValueError:
+                        #异常处理非数字输入
+                        print("错误——请输入有效的数字")
+            
+            case '3':#生成考场安排表，同时生成准考证
+                #必须同时生成，以为每一次安排学生是乱序的，考场安排表必须和准考证同时生成
+                arranged=system.generate_exam_arrangement()#调用生成
                 
-                case'4':
-                    print("感谢使用，已退出程序")#退出程序
+                #打印准考证
+                if arranged:
+                    system.generate_admission_files(arranged)
+            
+            case'4':
+                print("感谢使用，已退出程序")#退出程序
 
-                case _:
-                    print("无效输入，请重新输入")#输入数字无效，不再1-4的范围内
-    #ai编写——创建程序入口点
-    #当运行此文件时，__name__=__main__,执行main()
+            case _:
+                print("无效输入，请重新输入")#输入数字无效，不再1-4的范围内
+#ai编写——创建程序入口点
+#当运行此文件时，__name__=__main__,执行main()
 
-    if __name__=='__main__':
-        main()
+if __name__=='__main__':
+    main()
 
 
             
