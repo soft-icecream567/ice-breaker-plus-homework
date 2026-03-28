@@ -152,8 +152,8 @@
                 file.write(content)#写入文件
             
         print('完成准考证的生成')
-
-
+```
+## 5. 另附完整项目代码
 <details>
 <summary>考场管理系统完整代码</summary>
 
